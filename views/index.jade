@@ -1,5 +1,33 @@
 extends layout
 
+block headContent
+  script(src='../../javascripts/authorize.js')
+
 block content
   h1= title
   p Welcome to #{title}
+  #loggedout
+    a#connectLink(href='#') Connect to Trello
+  #loggedin
+    #header Logged in as&nbsp;
+      span#fullName
+      &nbsp;
+      a#disconnect(href='#') Log out
+    #output
+
+  script(type="text/javascript")
+    Trello.authorize({
+      interactive:false,
+      success: onAuthorize
+    });
+
+    $("#connectLink")
+    .click(function(){
+      Trello.authorize({
+        name: "Trelloscope",
+        type: "popup",
+        success: onAuthorize
+      });
+    });
+
+    $("#disconnect").click(logout);
