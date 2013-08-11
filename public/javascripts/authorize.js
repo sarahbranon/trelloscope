@@ -1,3 +1,14 @@
+var updateLoggedIn = function() {
+  var isLoggedIn = Trello.authorized();
+  $("#loggedout").toggle(!isLoggedIn);
+  $("#loggedin").toggle(isLoggedIn);
+};
+
+var logout = function() {
+  Trello.deauthorize();
+  updateLoggedIn();
+};
+
 var onAuthorize = function() {
   updateLoggedIn();
   $("#output").empty();
@@ -29,22 +40,28 @@ var onAuthorize = function() {
 
 var showBoard = function($boardLink) {
   var boardId = $boardLink.data("boardId"),
+      boardName = $boardLink.text(),
       $boards = $("#boards");
-  Trello.get("boards/"+boardId, function(board){
+
+  $boards.empty().text("Loading "+boardName+"...");
+
+  Trello.get("boards/"+boardId+"/actions?filter=createCard", function(creations){
     $boards.empty();
-    $("<div>")
-    .text("Congrats, you've loaded "+board.name)
-    .appendTo($boards);
+    $.each(creations, function(ix, creation) {
+      var $creation = $("<div>").addClass("creation");
+      $("<div>").addClass("date")
+      .html("Date: "+creation.date)
+      .appendTo($creation);
+      $("<div>").addClass("cardName")
+      .html("Card Name:"+creation.data.card.name)
+      .appendTo($creation);
+      // .data("boardId", board.id)
+      // .click(function(e) {
+      //   showBoard($(this));
+      //   e.preventDefault();
+      // })
+      $creation.appendTo($boards);
+    });
   });
 };
 
-var updateLoggedIn = function() {
-  var isLoggedIn = Trello.authorized();
-  $("#loggedout").toggle(!isLoggedIn);
-  $("#loggedin").toggle(isLoggedIn);
-};
-
-var logout = function() {
-  Trello.deauthorize();
-  updateLoggedIn();
-};
