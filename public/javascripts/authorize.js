@@ -1,37 +1,50 @@
 var onAuthorize = function() {
-    updateLoggedIn();
-    $("#output").empty();
+  updateLoggedIn();
+  $("#output").empty();
 
-    Trello.members.get("me", function(member){
-        $("#fullName").text(member.fullName);
+  Trello.members.get("me", function(member){
+    $("#fullName").text(member.fullName);
 
-        var $cards = $("<div>")
-            .text("Loading Cards...")
-            .appendTo("#output");
+    var $boards = $("<div id='boards'>")
+      .text("Loading Boards...")
+      .appendTo("#output");
 
-        // Output a list of all of the cards that the member
-        // is assigned to
-        Trello.get("members/me/cards", function(cards) {
-            $cards.empty();
-            $.each(cards, function(ix, card) {
-                $("<a>")
-                .attr({href: card.url, target: "trello"})
-                .addClass("card")
-                .text(card.name)
-                .appendTo($cards);
-            });
-        });
+    // Output a list of all of the member's boards
+    Trello.get("members/me/boards?fields=name,url", function(boards) {
+      $boards.empty();
+      $.each(boards, function(ix, board) {
+        $("<a href= '#'>")
+        .addClass("board")
+        .text(board.name)
+        .data("boardId", board.id)
+        .click(function(e) {
+          showBoard($(this));
+          e.preventDefault();
+        })
+        .appendTo($boards);
+      });
     });
+  });
+};
 
+var showBoard = function($boardLink) {
+  var boardId = $boardLink.data("boardId"),
+      $boards = $("#boards");
+  Trello.get("boards/"+boardId, function(board){
+    $boards.empty();
+    $("<div>")
+    .text("Congrats, you've loaded "+board.name)
+    .appendTo($boards);
+  });
 };
 
 var updateLoggedIn = function() {
-    var isLoggedIn = Trello.authorized();
-    $("#loggedout").toggle(!isLoggedIn);
-    $("#loggedin").toggle(isLoggedIn);
+  var isLoggedIn = Trello.authorized();
+  $("#loggedout").toggle(!isLoggedIn);
+  $("#loggedin").toggle(isLoggedIn);
 };
 
 var logout = function() {
-    Trello.deauthorize();
-    updateLoggedIn();
+  Trello.deauthorize();
+  updateLoggedIn();
 };
