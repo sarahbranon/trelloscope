@@ -41,7 +41,8 @@ var onAuthorize = function() {
 var showBoard = function($boardLink) {
   var boardId = $boardLink.data("boardId"),
       boardName = $boardLink.text(),
-      $boards = $("#boards");
+      $boards = $("#boards"),
+      cardData = [];
 
   $boards.empty().text("Loading "+boardName+"...");
 
@@ -61,7 +62,9 @@ var showBoard = function($boardLink) {
       //   e.preventDefault();
       // })
       $creation.appendTo($boards);
+      cardData.unshift({ x: Date.parse(creation.date), y: 1, cardName: creation.data.card.name });
     });
+    renderCardGraph(cardData);
   });
 };
 

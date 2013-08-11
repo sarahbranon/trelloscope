@@ -1,6 +1,7 @@
 extends layout
 
 block headContent
+  script(src='../../javascripts/graphs.js')
   script(src='../../javascripts/authorize.js')
 
 block content
@@ -13,6 +14,7 @@ block content
       span#fullName
       &nbsp;
       a#disconnect(href='#') Log out
+    #graphContainer
     #output
 
   script(type="text/javascript")
