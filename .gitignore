@@ -1,4 +1,4 @@
-# Thanks Github!
+# Node-- Thanks Github!
 
 lib-cov
 *.seed
@@ -15,3 +15,6 @@ results
 
 npm-debug.log
 # node_modules # http://www.futurealoof.com/posts/nodemodules-in-git.html
+
+# Sublime
+*.sublime*
